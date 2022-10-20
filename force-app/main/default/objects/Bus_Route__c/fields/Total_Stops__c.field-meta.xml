@@ -3,7 +3,7 @@
     <fullName>Total_Stops__c</fullName>
     <externalId>false</externalId>
     <label>Total Stops</label>
-    <summaryForeignKey>Bus_Stop__c.Bus_Route__c</summaryForeignKey>
+    <summaryForeignKey>Schedule__c.Bus_Route__c</summaryForeignKey>
     <summaryOperation>count</summaryOperation>
     <trackTrending>false</trackTrending>
     <type>Summary</type>

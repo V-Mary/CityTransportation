@@ -1,29 +1,34 @@
 public with sharing class ScheduleTriggerHandler {
-    //Start and End Times of the Bus Route should be based on the minimum and maximum values in the Time field of the Schedule.
-    //after Insert update sch
-    public static void updateStartEndTime(List<Schedule__c> newSchedules, Map<Id, Schedule__c> oldSchedulesMap){
+
+    @TestVisible
+    private static Set<Id> getBusRouteId(List<Schedule__c> newSch, Map<Id, Schedule__c> oldMap){
 
         Set<Id> idsSet = new Set<Id>();
 
-        if (oldSchedulesMap == null) {
+        if (oldMap == null) {
             //insert new sch
-            for(Schedule__c schedule : newSchedules){
+            for(Schedule__c schedule : newSch){
                 idsSet.add(schedule.Bus_Route__c);
             }
             
         }else{
             //update time or bus route in sch
-            for (Schedule__c sch : newSchedules) {
-                if (sch.Time__c != oldSchedulesMap.get(sch.Id).Time__c || sch.Bus_Route__c != oldSchedulesMap.get(sch.Id).Bus_Route__c) {
+            for (Schedule__c sch : newSch) {
+                if (sch.Time__c != oldMap.get(sch.Id).Time__c || sch.Bus_Route__c != oldMap.get(sch.Id).Bus_Route__c) {
                     idsSet.add(sch.Bus_Route__c);
-                    idsSet.add(oldSchedulesMap.get(sch.Id).Bus_Route__c);
+                    idsSet.add(oldMap.get(sch.Id).Bus_Route__c);
                 }
             }
         }
 
-        if (idsSet == null) {
-            return ;
-        }
+        return idsSet;
+
+    }
+    //Start and End Times of the Bus Route should be based on the minimum and maximum values in the Time field of the Schedule.
+    //after Insert update sch
+    public static void updateStartEndTime(List<Schedule__c> newSchedules, Map<Id, Schedule__c> oldSchedulesMap){
+
+        Set<Id> idsSet = getBusRouteId(newSchedules, oldSchedulesMap);
 
         List <Bus_Route__c> busRouteList = [SELECT Start_Time__c, End_Time__c, 
                 (SELECT Time__c FROM Schedules__r ORDER BY Time__c ASC) 
@@ -41,37 +46,16 @@ public with sharing class ScheduleTriggerHandler {
     }
 
     // автоматично прокалькулювати TimeToNextStop__c 
-    //це має бути на інсерті Schedule__c або на апдейті Schedule__c поля BusRoute__c або поля BusStop__c або поля Time__c
     public static void setTimeToNextStop(List<Schedule__c> newSchedules, Map<Id, Schedule__c> oldSchedulesMap) {
 
-        Set<Id> idsSetRoute = new Set<Id>();
-
-        if (oldSchedulesMap == null) {
-            //insert new sch
-            for(Schedule__c schedule : newSchedules){
-                idsSetRoute.add(schedule.Bus_Route__c);
-            }
-            
-        }else{
-            //update time or bus route in sch
-            for (Schedule__c sch : newSchedules) {
-                if (sch.Time__c != oldSchedulesMap.get(sch.Id).Time__c || sch.Bus_Route__c != oldSchedulesMap.get(sch.Id).Bus_Route__c) {
-                    idsSetRoute.add(sch.Bus_Route__c);
-                    idsSetRoute.add(oldSchedulesMap.get(sch.Id).Bus_Route__c);
-                }
-            }
-        }
-
-        if (idsSetRoute == null) {
-            return ;
-        }
+        Set<Id> idsSet = getBusRouteId(newSchedules, oldSchedulesMap);
 
         List<Bus_Route__c> busRouteList = [
                 SELECT Start_Time__c, End_Time__c, 
                 (SELECT Time__c, Time_To_Next_Stop__c FROM Schedules__r ORDER BY Time__c ASC) 
                 FROM Bus_Route__c 
                 WHERE Id 
-                IN: idsSetRoute];
+                IN: idsSet];
 
         List<Schedule__c> schedtoUpdate = new List<Schedule__c>();
 
