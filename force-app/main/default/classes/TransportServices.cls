@@ -9,8 +9,9 @@ public with sharing class TransportServices {
         }
     }
 
-    //додала поле Bus_Route__c, оскільки воно вимагається ПЕРЕВІРИТИ
+    
     public static void createStop(String name, String address) {
+
         Bus_Stop__c newBusStop = new Bus_Stop__c(Address__c = address, Name = name);
 
         try{
@@ -25,7 +26,7 @@ public with sharing class TransportServices {
         }
 
     }
-    //TransportServices.createStop('TestStop2', 'Address', 'a007Q00000BHe0HQAT');
+    //TransportServices.createStop('TestStop2', 'Address');
     
 
     //create schedule record
@@ -81,10 +82,19 @@ public with sharing class TransportServices {
 
         Bus_Stop__c BusStop = new Bus_Stop__c(id = busStopId);
         List<Schedule__c> listSchedule = [Select id from Schedule__c where Bus_Stop__c=:busStopId];
-        delete listSchedule;
-        delete BusStop;
+
+        try{
+            delete listSchedule;
+            delete BusStop;
+            System.debug('deleted');
+
+        } catch (Dmlexception e) {
+
+            System.debug(e);
+
+        }
 
     }
-    //TransportServices.deleteBusStop('a017Q000019KEVWQA4');
+    //TransportServices.deleteBusStop('a017Q00001AuulyQAB');
 
 }

@@ -1,0 +1,16 @@
+<aura:component controller="BusRoutesViewController" implements="flexipage:availableForAllPageTypes">
+    <aura:attribute name="routes"  type="Bus_Route__c[]"/>
+    <aura:attribute name="columns"  type="List"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit }"/>
+
+    <div class="sldx-box sldx-theme_default">
+        <lightning:layout>
+
+            <lightning:layoutItem size="9" padding="around-small">
+                <lightning:datatable keyField="id" data="{!v.routes}" columns="{!v.columns}" hideCheckboxColumn="true"/>
+            </lightning:layoutItem>
+
+        </lightning:layout>
+    </div>
+</aura:component>

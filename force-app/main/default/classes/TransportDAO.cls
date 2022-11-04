@@ -28,7 +28,7 @@ public with sharing class TransportDAO {
         List<Schedule__c> listSchedule = new List<Schedule__c>();
 
         if ((offsetNumber > 0)&&(limitNumber > offsetNumber)) {
-            listSchedule = [SELECT Name__c FROM Schedule__c LIMIT :limitNumber OFFSET :offsetNumber];
+            listSchedule = [SELECT Name FROM Schedule__c LIMIT :limitNumber OFFSET :offsetNumber];
         } else {
             System.debug('Invalid parameters');
         }
@@ -36,14 +36,14 @@ public with sharing class TransportDAO {
         return listSchedule;
 
     }
-    //System.debug(TransportDAO.getSchedules(3, 1));
+   // System.debug(TransportDAO.getSchedules(3, 1));
 
 
     public static List<Bus_Stop__c> getBusStopsByIds(Set<Id> busStops) {
         //Get list of bus stops by bus stop Ids
-        List<Bus_Stop__c> listStops = [SELECT Name FROM Bus_Stop__c WHERE Id IN: busStops];
+       // List<Bus_Stop__c> listStops = [SELECT Name FROM Bus_Stop__c WHERE Id IN: busStops];
         
-        return listStops;
+        return [SELECT Name FROM Bus_Stop__c WHERE Id IN: busStops];
     }
     // Set<Id> s1 = new Set<Id>();
     // s1.add('a017Q000019IilYQAS');

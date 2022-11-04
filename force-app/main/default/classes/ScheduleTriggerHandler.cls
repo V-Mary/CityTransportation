@@ -45,7 +45,7 @@ public with sharing class ScheduleTriggerHandler {
 
     }
 
-    // автоматично прокалькулювати TimeToNextStop__c 
+    // автоматично прокалькулювати TimeToNextStop__c коли змінився розклад
     public static void setTimeToNextStop(List<Schedule__c> newSchedules, Map<Id, Schedule__c> oldSchedulesMap) {
 
         Set<Id> idsSet = getBusRouteId(newSchedules, oldSchedulesMap);
